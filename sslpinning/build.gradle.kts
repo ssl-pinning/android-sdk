@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.maven.publish)
 }
 
+import com.vanniktech.maven.publish.SonatypeHost
+
 android {
     namespace = "io.github.sslpinning"
     compileSdk {
