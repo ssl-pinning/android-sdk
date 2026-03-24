@@ -15,21 +15,10 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Publish library
+      - name: Publish library to Maven Central
         env:
-          CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
-          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-        run: ./gradlew :sslpinning:publishReleasePublicationToCentralRepository
-
-      - name: Upload deployment to Central Portal
-        env:
-          CENTRAL_NAMESPACE: ${{ secrets.CENTRAL_NAMESPACE }}
-          CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
-          CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
-        run: |
-          TOKEN="$(printf "%s:%s" "$CENTRAL_USERNAME" "$CENTRAL_PASSWORD" | base64 | tr -d '\n')"
-          curl -sS -X POST \
-            -H "Authorization: Bearer $TOKEN" \
-            "https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/${CENTRAL_NAMESPACE}?publishing_type=user_managed"
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_PRIVATE_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_PASSPHRASE }}
+        run: ./gradlew :sslpinning:publishAndReleaseToMavenCentral --no-configuration-cache

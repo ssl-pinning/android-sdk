@@ -197,7 +197,7 @@ private fun SslPinningScreen(sslPinningClient: SslPinningClient) {
 
                                 val client = if (sslEnabled) pinnedClient else plainClient
 
-                                Log.d("SSL::client", "client - ${client}, sslEnabled - ${sslEnabled}")
+                                Log.d("SSL::client", "client - ${client}, sslEnabled - $sslEnabled")
 
                                 client.newCall(request).execute().use { response ->
                                     if (response.isSuccessful) {
@@ -236,7 +236,6 @@ private fun SslPinningScreen(sslPinningClient: SslPinningClient) {
             Spacer(modifier = Modifier.height(24.dp))
 
             UrlRow(
-                label = "Your URL",
                 value = googleUrl,
                 onValueChange = { googleUrl = it },
                 status = googleStatus,
@@ -255,7 +254,6 @@ private fun SslPinningScreen(sslPinningClient: SslPinningClient) {
 
 @Composable
 private fun UrlRow(
-    label: String,
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
     status: RequestStatus,
@@ -269,7 +267,7 @@ private fun UrlRow(
             modifier = Modifier.weight(1f),
             value = value,
             onValueChange = onValueChange,
-            label = { Text(label) },
+            label = { Text("Your URL") },
             singleLine = true
         )
 

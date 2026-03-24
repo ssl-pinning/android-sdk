@@ -1,9 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-
-    id("maven-publish")
-    id("signing")
+    alias(libs.plugins.maven.publish)
 }
 
 android {
@@ -37,87 +35,48 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-            withJavadocJar()
-        }
-    }
 }
 
 dependencies {
-    implementation(libs.jsonCanonicalization)
-    implementation(libs.okhttp)
+    api(libs.okhttp)
+    api(libs.kotlinxCoroutinesCore)
     implementation(libs.okhttpLogging)
-    implementation(libs.kotlinxCoroutinesCore)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
+    implementation(libs.jsonCanonicalization)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
 
-group = "io.github.sslpinning"
-version = "0.1.0"
+mavenPublishing {
+    publishToMavenCentral(automaticRelease = true)
+    signAllPublications()
 
-afterEvaluate {
-    publishing {
-        publications {
-            create<MavenPublication>("release") {
-                from(components["release"])
+    pom {
+        name.set("sslpinning")
+        description.set("Android SDK for SSL pinning with remotely signed pins registry.")
+        inceptionYear.set("2025")
+        url.set("https://github.com/ssl-pinning/android-sdk/")
 
-                artifactId = "sslpinning"
-
-                pom {
-                    name.set("sslpinning")
-                    description.set("Android SDK for SSL pinning with remotely signed pins registry.")
-                    url.set("https://github.com/ssl-pinning/ssl-pinning-android")
-
-                    licenses {
-                        license {
-                            name.set("BSD 3-Clause")
-                            url.set("https://opensource.org/licenses/BSD-3-Clause")
-                        }
-                    }
-
-                    scm {
-                        url.set("https://github.com/ssl-pinning/ssl-pinning-android")
-                        connection.set("scm:git:https://github.com/ssl-pinning/ssl-pinning-android.git")
-                        developerConnection.set("scm:git:ssh://git@github.com:ssl-pinning/ssl-pinning-android.git")
-                    }
-
-                    developers {
-                        developer {
-                            id.set("ssl-pinning")
-                            name.set("ssl-pinning")
-                        }
-                    }
-                }
+        licenses {
+            license {
+                name.set("BSD-3-Clause")
+                url.set("https://opensource.org/licenses/BSD-3-Clause")
+                distribution.set("repo")
             }
         }
 
-        repositories {
-            maven {
-                name = "central"
-
-                // Central Portal staging endpoint
-                url = uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
-
-                credentials {
-                    username = System.getenv("CENTRAL_USERNAME")
-                    password = System.getenv("CENTRAL_PASSWORD")
-                }
+        developers {
+            developer {
+                id.set("ssl-pinning")
+                name.set("ssl-pinning")
+                url.set("https://github.com/ssl-pinning/")
             }
         }
-    }
 
-    signing {
-        val key = System.getenv("GPG_PRIVATE_KEY")
-        val pass = System.getenv("GPG_PASSPHRASE")
-
-        useInMemoryPgpKeys(key, pass)
-        sign(publishing.publications["release"])
+        scm {
+            url.set("https://github.com/ssl-pinning/android-sdk/")
+            connection.set("scm:git:git://github.com/ssl-pinning/android-sdk.git")
+            developerConnection.set("scm:git:ssh://git@github.com/ssl-pinning/android-sdk.git")
+        }
     }
 }
