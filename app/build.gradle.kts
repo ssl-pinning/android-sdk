@@ -65,7 +65,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":sslpinning"))
+    implementation("io.github.sslpinninglib:sslpinning:0.1.0")
     implementation(libs.okhttp)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
